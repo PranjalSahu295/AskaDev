@@ -1,18 +1,10 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, AbstractUser
 from PIL import Image
 from io import BytesIO
 from django.core.files import File
-import os
-# def compress(image):
-    # im = Image.open(image)
-    # im_io = BytesIO() 
-    # if im.mode in ("RGBA", "P"):
-    	# im = im.convert("RGB")
-	# im = im.resize((400),(400))
-    # im.save(im_io, 'JPEG',optimize=True,quality=60) 
-    # new_image = File(im_io, name=image.name)
-    # return new_image
+import os, uuid
+
 
 class ProgrammingLanguage(models.Model):
 	language = models.CharField(max_length=256)
@@ -33,10 +25,11 @@ class UserProfile(models.Model):
 	follows = models.ManyToManyField('UserProfile',blank=True, related_name='following')
 	followers = models.ManyToManyField('UserProfile', blank=True)
 	points = models.PositiveIntegerField(default=0)
+	
 	def __str__(self):
 		return str(self.user)
-	# def save(self, *args, **kwargs):
-		# new_image = compress(self.profile_picture)
-		# self.profile_picture = new_image
-		# super().save(*args, **kwargs)
 	
+	def save(self, *args, **kwargs):
+		new_image = compress(self.profile_picture)
+		self.profile_picture = new_image
+		super().save(*args, **kwargs)
